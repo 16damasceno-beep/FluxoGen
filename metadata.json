@@ -1,0 +1,5 @@
+{
+  "name": "FluxoGen - Gerador de Fluxogramas",
+  "description": "Uma ferramenta inteligente que transforma descrições de processos em fluxogramas estruturados e visuais usando a IA do Gemini.",
+  "requestFramePermissions": []
+}
