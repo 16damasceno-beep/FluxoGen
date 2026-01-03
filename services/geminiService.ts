@@ -19,37 +19,37 @@ export const generateFlowchart = async (
   const systemInstruction = `Você é um Consultor de Processos Sênior especialista em Bizagi e Modelagem BPMN.
 Sua tarefa é criar diagramas de fluxo profissionais em Português do Brasil (PT-BR).
 
-REGRAS CRÍTICAS DE SINTAXE MERMAID (PARA EVITAR ERROS DE PARSE):
-1. CARACTERES: Use APENAS caracteres ASCII básicos no código Mermaid. 
-   - NUNCA use caracteres como ﬂ, °, ¶, ß, ou acentos nos IDs dos nós.
-   - IDs devem ser apenas letras e números (ex: INICIO, T1, T2, FIM).
-2. RÓTULOS: SEMPRE coloque o texto dos nós entre aspas duplas: ID["Texto do Nó"].
-3. ESTILOS: NUNCA use ':::' ou estilos inline.
-   - Use apenas as classes pré-definidas no final do código:
-     classDef task fill:#F4F7F9,stroke:#2B5797,stroke-width:2px,color:#333333;
-     classDef gateway fill:#FFFAE6,stroke:#856404,stroke-width:2px,color:#333333;
-     classDef event fill:#FFFFFF,stroke:#28A745,stroke-width:2px,color:#333333;
-     classDef endEvent fill:#FFFFFF,stroke:#DC3545,stroke-width:2px,color:#333333;
-4. APLICAÇÃO DE CLASSES: Use a sintaxe 'class ID nomeDaClasse;' em linhas separadas no final.
+REGRAS ABSOLUTAS DE SINTAXE MERMAID:
+1. SEM CARACTERES ESPECIAIS: O código Mermaid não deve conter caracteres como ﬂ, °, ¶, ß, ou símbolos estranhos. Use apenas ASCII padrão para a estrutura.
+2. RÓTULOS SEGUROS: SEMPRE use aspas duplas em todos os textos de nós: ID["Texto do Nó"].
+3. IDs SIMPLES: IDs devem ser curtos, sem acentos e sem espaços (ex: INICIO, T1, G1, FIM).
+4. ESTILOS OBRIGATÓRIOS (COPIE EXATAMENTE):
+   classDef task fill:#F4F7F9,stroke:#2B5797,stroke-width:2px,color:#333333;
+   classDef gateway fill:#FFFAE6,stroke:#856404,stroke-width:2px,color:#333333;
+   classDef event fill:#FFFFFF,stroke:#28A745,stroke-width:2px,color:#333333;
+   classDef endEvent fill:#FFFFFF,stroke:#DC3545,stroke-width:2px,color:#333333;
 
-ESTRUTURA EXEMPLO:
+5. APLICAÇÃO DE CLASSES: Use apenas 'class ID nomeDaClasse;' no final do código. NUNCA use ':::'.
+
+ESTRUTURA TÉCNICA:
 graph TD
-  START["Início"] --> T1["Análise de Crédito"]
+  START["Início"] --> T1["Análise"]
+  T1 --> FIM["Fim"]
   class START event;
   class T1 task;
+  class FIM endEvent;
 
 DIRETRIZES DE CONTEÚDO:
-- Se houver anexos (prints ou documentos), extraia a lógica de negócio fielmente.
-- Todo o conteúdo visível (rótulos, títulos) DEVE ser em Português (PT-BR).
-- Retorne apenas o JSON puro, sem markdown.`;
+- Traduza para PT-BR se os arquivos/prompt estiverem em outro idioma.
+- Retorne apenas o JSON.`;
 
-  let textContent = `Crie um fluxograma BPMN profissional (estilo Bizagi) em PT-BR para: "${prompt}"`;
+  let textContent = `Gere um fluxograma BPMN em PT-BR para: "${prompt}"`;
   
   if (currentData) {
-    textContent = `Atualize este processo seguindo as novas regras de sintaxe:
+    textContent = `Refine este processo seguindo as novas regras rígidas de ASCII:
 Título: ${currentData.title}
 Mermaid: ${currentData.mermaidCode}
-Alteração solicitada: "${prompt}"`;
+Alteração: "${prompt}"`;
   }
 
   const parts: any[] = [{ text: textContent }];
@@ -82,12 +82,11 @@ Alteração solicitada: "${prompt}"`;
   });
 
   const text = response.text;
-  if (!text) throw new Error("IA retornou vazio.");
+  if (!text) throw new Error("Resposta vazia da IA.");
   
   try {
     return JSON.parse(text) as FlowchartData;
   } catch (e) {
-    console.error("Erro JSON:", text);
-    throw new Error("Erro na resposta da IA.");
+    throw new Error("Erro ao processar dados da IA.");
   }
 };
